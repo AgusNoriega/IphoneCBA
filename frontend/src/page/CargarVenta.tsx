@@ -1,32 +1,125 @@
-import { useState } from "react";
+import Swal from "sweetalert2";
+import { useEffect, useState } from "react";
 
-type FormaPago = "Efectivo" | "Transferencia" | "Tarjeta" | "Mercado Pago";
+type Opcion = { id: number; nombre: string };
 
 export const CargarVenta = () => {
   const [fecha, setFecha] = useState("");
   const [imei, setImei] = useState("");
-  const [formaPago, setFormaPago] = useState<FormaPago>("Efectivo");
   const [precio, setPrecio] = useState("");
   const [notas, setNotas] = useState("");
+
+  const [formasPago, setFormasPago] = useState<Opcion[]>([]);
+  const [tiposVenta, setTiposVenta] = useState<Opcion[]>([]);
+  const [idFormaPago, setIdFormaPago] = useState<number | null>(null);
+  const [idTipoVenta, setIdTipoVenta] = useState<number | null>(null);
+
   const [loading, setLoading] = useState(false);
 
-  function onSubmit(e: React.FormEvent) {
+  useEffect(() => {
+    async function cargarCatalogos() {
+      try {
+        const [fpRes, tvRes] = await Promise.all([
+          fetch("http://localhost:3000/catalogos/formas-pago"),
+          fetch("http://localhost:3000/catalogos/tipos-venta"),
+        ]);
+        const fpJson = await fpRes.json();
+        const tvJson = await tvRes.json();
+
+        const fp: Opcion[] = fpJson.map((x: any) => ({
+          id: x.IdFormasdepago,
+          nombre: x.Nombre,
+        }));
+        const tv: Opcion[] = tvJson.map((x: any) => ({
+          id: x.idIdTipodeventa,
+          nombre: x.Nombre,
+        }));
+
+        setFormasPago(fp);
+        setTiposVenta(tv);
+
+        // seleccionar defaults si existen
+        if (fp.length > 0) setIdFormaPago(fp[0].id);
+        if (tv.length > 0) setIdTipoVenta(tv[0].id);
+      } catch (e) {
+        console.error("Error cargando catálogos", e);
+        alert("No se pudieron cargar los catálogos");
+      }
+    }
+    cargarCatalogos();
+  }, []);
+
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!fecha) return alert("La fecha es obligatoria");
     if (!imei || imei.length < 10) return alert("IMEI inválido");
     const p = Number(precio);
     if (!p || p <= 0) return alert("Precio inválido");
+    if (!idFormaPago) return alert("Seleccioná una forma de pago");
+    if (!idTipoVenta) return alert("Seleccioná un tipo de venta");
 
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      alert("✅ Venta cargada (simulación)");
+    try {
+      const response = await fetch("http://localhost:3000/ventas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          imeis: [imei],
+          idFormaPago,
+          idTipoVenta,
+          precio: p,
+          notas,
+          // podés enviar fecha si el backend la quiere tomar:
+          // fecha,
+        }),
+      });
+      if (!response.ok) {
+        const t = await response.text();
+        throw new Error(t || "Error al registrar la venta");
+      }
+      const data = await response.json();
+      Swal.fire({
+        title: "✅ Venta registrada con éxito",
+        html: `
+    <div style="font-size: 15px; color:#333; margin-top: 6px;">
+      El producto con IMEI <b>${imei}</b> fue marcado como <b>vendido</b>.
+    </div>
+  `,
+        icon: "success",
+        iconColor: "#4a7df5",
+        background: "#fff",
+        color: "#111",
+        confirmButtonText: "Listo",
+        confirmButtonColor: "#4a7df5",
+        showClass: {
+          popup: "animate__animated animate__fadeInDown",
+        },
+        hideClass: {
+          popup: "animate__animated animate__fadeOutUp",
+        },
+      });
+
+      // limpiar
       setFecha("");
       setImei("");
-      setFormaPago("Efectivo");
       setPrecio("");
       setNotas("");
-    }, 400);
+      // mantener selección de combos, si querés no los resetees
+    } catch (err: any) {
+      console.error(err);
+
+      Swal.fire({
+        icon: "error",
+        title: "No se pudo registrar la venta",
+        text: err.message?.includes("IMEI")
+          ? err.message
+          : "Verificá que el IMEI no esté ya vendido o que exista en la base de datos.",
+        confirmButtonText: "Aceptar",
+        confirmButtonColor: "#dc3545",
+      });
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -62,13 +155,30 @@ export const CargarVenta = () => {
             <select
               id="pago"
               className="select"
-              value={formaPago}
-              onChange={(e) => setFormaPago(e.target.value as FormaPago)}
+              value={idFormaPago ?? ""}
+              onChange={(e) => setIdFormaPago(parseInt(e.target.value))}
             >
-              <option>Efectivo</option>
-              <option>Transferencia</option>
-              <option>Tarjeta</option>
-              <option>Mercado Pago</option>
+              {formasPago.map((op) => (
+                <option key={op.id} value={op.id}>
+                  {op.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="field">
+            <label htmlFor="tipo">Tipo de Venta</label>
+            <select
+              id="tipo"
+              className="select"
+              value={idTipoVenta ?? ""}
+              onChange={(e) => setIdTipoVenta(parseInt(e.target.value))}
+            >
+              {tiposVenta.map((op) => (
+                <option key={op.id} value={op.id}>
+                  {op.nombre}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -96,7 +206,11 @@ export const CargarVenta = () => {
           </div>
 
           <div className="actions">
-            <button className="btn" type="submit" disabled={loading}>
+            <button
+              className="btn"
+              type="submit"
+              disabled={loading || !idFormaPago || !idTipoVenta}
+            >
               {loading ? "Guardando..." : "Cargar Venta"}
             </button>
           </div>
