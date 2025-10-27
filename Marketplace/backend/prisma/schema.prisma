@@ -1,0 +1,173 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Equipos {
+  IdEquipo    Int     @id @default(autoincrement())
+  Nombre      String  @db.VarChar(500)
+  ImagenesURL String? @db.Text
+  productos   Producto[]
+  precios     Precios_Mayorista[]
+}
+
+model Colores {
+  IdColor Int     @id @default(autoincrement())
+  Nombre  String  @db.VarChar(500)
+  productos Producto[]
+}
+
+model Estados {
+  IdEstado Int     @id @default(autoincrement())
+  Nombre   String  @db.VarChar(500)
+  productos Producto[]
+}
+
+model Grados {
+  IdGrado Int    @id @default(autoincrement())
+  Nombre  String @db.Char(1)
+  productos Producto[]
+  precios Precios_Mayorista[]
+}
+
+model Disponibilidades {
+  IdDisponibilidad Int     @id @default(autoincrement())
+  Nombre           String  @db.VarChar(500)
+  productos Producto[]
+}
+
+model Rangos_de_Bateria {
+  IdRango           Int     @id @default(autoincrement())
+  Nombre            String  @db.VarChar(500)
+  MaximoPorcentaje  Decimal
+  minimoPorcentaje  Decimal
+  precios Precios_Mayorista[]
+}
+
+model Producto {
+  IMEI             String  @id @db.VarChar(500)
+  IdEquipo         Int
+  Capacidad        Int?
+  IdColor          Int
+  Bateria          Decimal
+  IdGrado          Int
+  Detalle          String? @db.VarChar(500)
+  IdEstado         Int
+  IdDisponibilidad Int
+  Coste            Int
+  Fecha            DateTime @db.Date
+  
+  equipo           Equipos         @relation(fields: [IdEquipo], references: [IdEquipo])
+  color            Colores         @relation(fields: [IdColor], references: [IdColor])
+  grado            Grados         @relation(fields: [IdGrado], references: [IdGrado])
+  estado           Estados        @relation(fields: [IdEstado], references: [IdEstado])
+  disponibilidad   Disponibilidades @relation(fields: [IdDisponibilidad], references: [IdDisponibilidad])
+  
+  ventas           Venta_Productos[]
+  pedidosDetalle   Pedidos_Mayoristas_Detalle[]
+
+  @@index([IdEquipo])
+  @@index([IdEstado])
+  @@index([IdDisponibilidad])
+}
+
+model Precios_Mayorista {
+  IdEquipo Int
+  IdRango  Int
+  IdGrado  Int
+  Precio   Decimal
+  
+  equipo   Equipos           @relation(fields: [IdEquipo], references: [IdEquipo])
+  rango    Rangos_de_Bateria @relation(fields: [IdRango], references: [IdRango])
+  grado    Grados           @relation(fields: [IdGrado], references: [IdGrado])
+
+  @@id([IdEquipo, IdRango, IdGrado])
+}
+
+model Pedidos_Mayoristas {
+  NdPedido         Int     @id @default(autoincrement())
+  Fecha            DateTime @db.Date
+  IdCliente        Int
+  IdFormadepago    Int
+  IdEstadoMayorista Int
+  Total            Decimal
+  
+  cliente          Clientes @relation(fields: [IdCliente], references: [IdCliente])
+  formaPago        Formas_de_Pago @relation(fields: [IdFormadepago], references: [IdFormasdepago])
+  estado           Estados_Pedidos_Mayoristas @relation(fields: [IdEstadoMayorista], references: [IdEstadoMayorista])
+  
+  detalles         Pedidos_Mayoristas_Detalle[]
+}
+
+model Pedidos_Mayoristas_Detalle {
+  NdePedido      Int
+  IMEI           String @db.VarChar(500)
+  PrecioUnitario Decimal
+  
+  pedido         Pedidos_Mayoristas @relation(fields: [NdePedido], references: [NdPedido])
+  producto       Producto @relation(fields: [IMEI], references: [IMEI])
+
+  @@id([NdePedido, IMEI])
+}
+
+model Clientes {
+  IdCliente        Int     @id @default(autoincrement())
+  Nombre           String  @db.VarChar(500)
+  Mail             String? @db.VarChar(500)
+  NombredeFantasia String? @db.VarChar(500)
+  Telefono         String? @db.VarChar(500)
+  Cuit             String? @db.VarChar(500)
+  
+  pedidos          Pedidos_Mayoristas[]
+}
+
+model Formas_de_Pago {
+  IdFormasdepago Int     @id @default(autoincrement())
+  Nombre         String  @db.VarChar(500)
+  
+  pedidos        Pedidos_Mayoristas[]
+  ventas         Ventas[]
+}
+
+model Estados_Pedidos_Mayoristas {
+  IdEstadoMayorista Int     @id @default(autoincrement())
+  Nombre            String  @db.VarChar(500)
+  
+  pedidos           Pedidos_Mayoristas[]
+}
+
+model Ventas {
+  IdVentas      Int     @id @default(autoincrement())
+  Fecha         DateTime @db.Date
+  IdFormasdepago Int
+  IdTipodeventa  Int
+  Notas         String? @db.Text
+  
+  formaPago     Formas_de_Pago @relation(fields: [IdFormasdepago], references: [IdFormasdepago])
+  tipoVenta     Tipo_de_Ventas @relation(fields: [IdTipodeventa], references: [idIdTipodeventa])
+  
+  productos     Venta_Productos[]
+}
+
+model Tipo_de_Ventas {
+  idIdTipodeventa Int     @id @default(autoincrement())
+  Nombre          String  @db.VarChar(500)
+  
+  ventas          Ventas[]
+}
+
+model Venta_Productos {
+  IMEI        String   @db.VarChar(500)
+  IdVentas    Int
+  Fecha       DateTime @db.Date
+  Precioventa Decimal
+  
+  producto    Producto @relation(fields: [IMEI], references: [IMEI])
+  venta       Ventas   @relation(fields: [IdVentas], references: [IdVentas])
+
+  @@id([IMEI, IdVentas])
+}

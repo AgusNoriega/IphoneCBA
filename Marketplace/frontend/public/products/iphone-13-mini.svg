@@ -1,0 +1,35 @@
+<svg width="180" height="360" viewBox="0 0 180 360" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo del teléfono (más pequeño para el mini) -->
+  <rect x="20" y="20" width="140" height="320" rx="28" ry="28" fill="#1d1d1f" stroke="#424245" stroke-width="2"/>
+  
+  <!-- Pantalla -->
+  <rect x="27" y="35" width="126" height="275" rx="20" ry="20" fill="#0a0a0a"/>
+  
+  <!-- Notch más pequeño (iPhone 13) -->
+  <rect x="65" y="35" width="50" height="16" rx="8" fill="#1d1d1f"/>
+  <circle cx="90" cy="43" r="3.5" fill="#2d2d30"/>
+  
+  <!-- Botones laterales -->
+  <rect x="17" y="85" width="3" height="40" rx="1.5" fill="#424245"/>
+  <rect x="17" y="140" width="3" height="30" rx="1.5" fill="#424245"/>
+  <rect x="160" y="100" width="3" height="50" rx="1.5" fill="#424245"/>
+  
+  <!-- Cámaras traseras diagonales (iPhone 13) -->
+  <g transform="translate(27, 45)">
+    <rect x="0" y="0" width="45" height="45" rx="13" fill="#2d2d30"/>
+    <circle cx="13" cy="13" r="9" fill="#1a1a1c" stroke="#424245" stroke-width="1"/>
+    <circle cx="13" cy="13" r="5.5" fill="#0a0a0a"/>
+    <circle cx="32" cy="32" r="9" fill="#1a1a1c" stroke="#424245" stroke-width="1"/>
+    <circle cx="32" cy="32" r="5.5" fill="#0a0a0a"/>
+    <circle cx="35" cy="13" r="3.5" fill="#1a1a1c"/>
+  </g>
+  
+  <!-- Logo Apple -->
+  <g transform="translate(90, 175)">
+    <path d="M 0,-8 C -2,-8 -3,-6 -3,-4 C -3,-2 -1,0 0,2 C 1,0 3,-2 3,-4 C 3,-6 2,-8 0,-8 M 1,-9 C 2,-10 2,-11 2,-12 C 2,-13 1,-13 0,-13 C 0,-12 0,-11 1,-9" fill="#424245" opacity="0.4"/>
+  </g>
+  
+  <!-- Texto iPhone 13 mini -->
+  <text x="90" y="335" font-family="SF Pro Display, -apple-system, system-ui, sans-serif" font-size="11" font-weight="600" fill="#86868b" text-anchor="middle">iPhone 13 mini</text>
+</svg>
+
