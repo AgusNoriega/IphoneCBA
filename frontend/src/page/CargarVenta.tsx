@@ -51,10 +51,24 @@ export const CargarVenta = () => {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!fecha) return alert("La fecha es obligatoria");
+    if (!fecha)
+      return Swal.fire({
+        icon: "error",
+        title: "No se pudo registrar la venta",
+        text: "Seleccione una fecha valida",
+        confirmButtonText: "Aceptar",
+        confirmButtonColor: "#dc3545",
+      });
     if (!imei || imei.length < 10) return alert("IMEI inválido");
     const p = Number(precio);
-    if (!p || p <= 0) return alert("Precio inválido");
+    if (!p || p <= 0)
+      return Swal.fire({
+        icon: "error",
+        title: "No se pudo registrar la venta",
+        text: "Ingrese el precio de la venta",
+        confirmButtonText: "Aceptar",
+        confirmButtonColor: "#dc3545",
+      });
     if (!idFormaPago) return alert("Seleccioná una forma de pago");
     if (!idTipoVenta) return alert("Seleccioná un tipo de venta");
 
