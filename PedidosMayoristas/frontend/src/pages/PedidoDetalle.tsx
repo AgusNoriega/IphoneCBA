@@ -1,75 +1,38 @@
-import type { Pedido } from "./mock";
+import type { Pedido } from "../types/pedidos";
 
 export default function PedidoDetalle({
   pedido,
-  open,
+  open = true,
 }: {
   pedido: Pedido;
-  open: boolean;
+  open?: boolean;
 }) {
-  const total = pedido.Pedidos_Mayoristas_Detalle.reduce(
-    (acc, it) => acc + Number(it.PrecioUnitario || 0),
-    0
-  );
-
-  function eliminarPedido() {
-    alert(`(UI) Eliminar pedido ${pedido.NdPedido}`);
-  }
-  function descontarStock() {
-    alert(`(UI) Descontar stock del pedido ${pedido.NdPedido}`);
-  }
+  if (!open) return null;
 
   return (
-    <div
-      id={`pedido-${pedido.NdPedido}`}
-      className={`pedido-detalle ${open ? "open" : ""}`}
-    >
-      <div
-        style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 12 }}
-      >
-        <div style={{ overflowX: "auto" }}>
-          <table>
-            <thead>
-              <tr>
-                <th>Equipo</th>
-                <th>IMEI</th>
-                <th>Precio</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pedido.Pedidos_Mayoristas_Detalle.map((it) => (
-                <tr key={it.IMEI}>
-                  <td>{it.Producto?.Equipos?.Nombre ?? "-"}</td>
-                  <td>{it.IMEI}</td>
-                  <td>USD {Number(it.PrecioUnitario || 0).toFixed(2)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <div className="acciones" style={{ marginTop: 8 }}>
-            <button className="btn-danger" onClick={eliminarPedido}>
-              Eliminar pedido
-            </button>
-            <button className="btn" onClick={descontarStock}>
-              Descontar del stock
-            </button>
-          </div>
-        </div>
-
-        <div className="resumen">
-          <div>
-            <b>Método de pago:</b> {pedido.Formas_de_Pago?.Nombre ?? "-"}
-          </div>
-          <div>
-            <b>Estado:</b> {pedido.Estados_Pedidos_Mayoristas?.Nombre ?? "-"}
-          </div>
-          <hr />
-          <div>
-            <b>Total:</b> USD {total.toFixed(2)}
-          </div>
-        </div>
-      </div>
+    <div className="pedido-detalle">
+      <table className="tabla-detalle">
+        <thead>
+          <tr>
+            <th>Equipo</th>
+            <th>IMEI</th>
+            <th style={{ textAlign: "right" }}>Precio</th>
+          </tr>
+        </thead>
+        <tbody>
+          {pedido.Pedidos_Mayoristas_Detalle.map((d) => (
+            <tr key={d.IMEI}>
+              <td>{d.Producto?.Equipos?.Nombre ?? "—"}</td>
+              <td>{d.IMEI}</td>
+              <td style={{ textAlign: "right" }}>
+                {new Intl.NumberFormat("es-AR").format(
+                  Number(d.PrecioUnitario ?? 0)
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

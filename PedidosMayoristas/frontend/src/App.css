@@ -1,25 +1,20 @@
-:root{
-  /* Inter como base; si querés más “redondito”, poné Nunito primero */
-  --font-ui: "Inter", "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI",
-             Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ===== Base ===== */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg, #f7f7fa);
+  color: var(--text, #111);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
-
-h1, h2, .card h2 { font-weight: 700; letter-spacing: -0.01em; }
-body, .input, .select, .textarea, .chip, .btn { font-weight: 500; }
-.btn { font-weight: 600; }
-html,
-body,
-#root {
-  height: 100%;
-  margin: 0;
-  background: #f7f7fa; /* mismo color que .page */
-}
-
 
 /* ===== Topbar ===== */
 .topbar {
@@ -35,12 +30,14 @@ body,
   padding:6px 12px; font-size:13px; cursor:pointer;
   box-shadow: 0 2px 6px rgba(0,0,0,.08);
 }
-.chips .chip:hover{
+.chip:hover{
   background-color: #3b6de0;
   color: #fff;
   border-color: #3b6de0;
   transition: background-color .2s ease, color .2s ease, border-color .2s ease;
 }
+
+/* ===== Sidebar ===== */
 .user-btn{ background:transparent; border:0; padding:6px 8px; border-radius:8px; font-weight:600; display:flex; align-items:center; gap:6px; cursor:pointer; }
 .user-btn:hover{ background:#f3f4f6; }
 
@@ -53,10 +50,10 @@ body,
 .sb-overlay.show{ opacity: 1; pointer-events: all; }
 
 .sb-panel{
-  position: fixed; top:0; right:0;           /* fixed = fuera del flujo */
+  position: fixed; top:0; right:0;
   width: 300px; height: 100vh; background:#fff;
   box-shadow: -8px 0 24px rgba(0,0,0,.1);
-  transform: translateX(100%);                /* completamente fuera */
+  transform: translateX(100%);
   transition: transform .3s cubic-bezier(.25,1,.5,1);
   z-index: 1000; display:flex; flex-direction:column;
 }
@@ -72,24 +69,8 @@ body,
 .sb-content{
   flex:1; display:flex; align-items:flex-end; justify-content:center; padding:20px;
 }
- .btn-danger{
-  background: #4a7df5;
-  color: #fff;
-  border: none;
-  padding: 9px 20px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.2s ease;
-}
 
-
-.btn-danger:hover{ background:#dc2626; } 
-
-
-/* ===== Aca empieza el estilo del pedido ===== */
-
-
+/* ===== Layout de la página de pedidos ===== */
 .page {
   display: flex;
   justify-content: center;
@@ -108,6 +89,7 @@ body,
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
 
+/* ===== Filtros ===== */
 .filtros {
   display: flex;
   align-items: center;
@@ -123,13 +105,13 @@ body,
   outline: none;
   transition: border-color 0.2s ease;
   font-size: 14px;
+ height: 20px;
+ 
 }
-
 .filtros .input:focus {
   border-color: #4a7df5;
   box-shadow: 0 0 0 2px rgba(74, 125, 245, 0.2);
 }
-
 .filtros .btn,
 .filtros .btn-date {
   background: #4a7df5;
@@ -141,79 +123,168 @@ body,
   font-weight: 600;
   transition: background 0.2s ease;
 }
-.btn{  background: #4a7df5;
-  color: #fff;
-  border: none;
-  padding: 9px 20px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.2s ease;
-}
-.btn:hover{background: #3b6de0;}
-
 .filtros .btn:hover,
 .filtros .btn-date:hover {
   background: #3b6de0;
 }
 
+/* ===== Lista ===== */
 .lista-pedidos {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-/* Tarjeta de pedido */
+/* ===== Tarjeta de pedido ===== */
 .pedido-card {
-  border: 1px solid #e0e0e5;
+  background: var(--card-bg, #fff);
+  border: 1px solid #e6e6e6;
   border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 10px 12px;
+  margin: 12px 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  transition: box-shadow .25s ease;
+}
+.pedido-card.open {
+  box-shadow: 0 2px 8px rgba(0,0,0,.1);
 }
 
-.pedido-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-}
-
+/* Header (acordeón) */
 .pedido-header {
   width: 100%;
-  text-align: left;
-  background: #f7f7fa;
-  padding: 12px 16px;
-  font-weight: 600;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  background: transparent;
   border: 0;
+  padding: 8px 4px;
   cursor: pointer;
-  border-bottom: 1px solid #ececf0;
 }
+.pedido-header__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto; 
+  align-items: center;
+  gap: 8px;
+}
+.pedido-header__title { font-weight: 700; color: #222; }
+.pedido-header__cliente { color: #444; text-align: center; font-weight: 600; }
+.pedido-header__date { color: #666; font-size: .95rem; text-align: right; }
 
-/* ===== Animación suave de acordeones ===== */
+/* Detalle */
 .pedido-detalle {
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition:
-    max-height 0.35s ease,
-    opacity 0.3s ease,
-    padding 0.3s ease;
+  margin-top: 8px;
+  border-top: 1px dashed #e0e0e0;
+  padding-top: 8px;
+}
+.tabla-detalle {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .95rem;
+}
+.tabla-detalle th, .tabla-detalle td {
+  padding: 6px 4px;
+}
+.tabla-detalle thead th {
+  text-align: left;
+  color: #444;
+  font-weight: 600;
+  border-bottom: 1px solid #eee;
+}
+.tabla-detalle tbody tr:not(:last-child) td {
+  border-bottom: 1px solid #f4f4f4;
 }
 
-.pedido-detalle.open {
-  max-height: 800px; /* suficiente para el contenido */
-  opacity: 1;
-  padding-top: 12px;
+/* ===== Botones ===== */
+.pedido-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.btn {
+  background: #4a7df5;
+  color: #fff;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background .2s ease, transform .02s ease, filter .15s ease;
+}
+.btn:hover { background: #3b6de0; }
+.btn:active { transform: translateY(1px); }
+.btn-danger {
+  background: #4a7df5; 
+}
+.btn-danger:hover {
+  background: #dc2626 !important;
 }
 
+
+.pedido-total {
+  text-align: right;
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+
+.estado-tabs {
+  display: inline-flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.tab {
+  background: #eef2ff;
+  color: #3949ab;
+  border: 1px solid #d7dcff;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease, color .2s ease;
+}
+.tab:hover { background: #e1e7ff; }
+.tab.active {
+  background: #4a7df5;
+  color: #fff;
+  border-color: #4a7df5;
+}
+
+/* Paginación */
+.pager {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 16px;
+}
+.btn-nav {
+  background: #e9edf9;
+  color: #2a3a77;
+  border: 1px solid #d4dcfb;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease, color .2s ease, transform .02s ease;
+}
+.btn-nav:hover { background: #dbe5ff; border-color: #c7d4ff; }
+.btn-nav:active { transform: translateY(1px); }
+.btn-nav:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+  background: #f1f3f9;
+  border-color: #e5e9f5;
+  color: #9aa3b2;
+}
+.page-indicator {
+  font-weight: 600;
+  color: #334;
+  padding: 0 6px;
+}
 /* ===== Responsive ===== */
 @media (max-width: 640px) {
-  .card{ padding: 30px 20px; }
-  .chip{ font-size:12px; padding:5px 10px; }
-  .field .input{ width: 350px;}
-  .field .textarea{ width: 350px;}
+  .mostrar-pedidos { padding: 24px; }
+  .pedido-header__row {
+    grid-template-columns: 1fr auto;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
 
 }
