@@ -1,0 +1,151 @@
+
+/* ===== Reset básico ===== */
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg, #f7f7fa);
+  color: var(--text, #111);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+html, body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, .card h2 { font-weight: 700; letter-spacing: -0.01em; }
+body, .input, .select, .textarea, .chip, .btn { font-weight: 500; }
+.btn { font-weight: 600; }
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: #f7f7fa; /* mismo color que .page */
+}
+
+
+/* ===== Topbar ===== */
+.topbar {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 6px 18px;
+  background: #fff; border-bottom: 1px solid #ececf0;
+  box-shadow: 0 2px 6px rgba(0,0,0,.1);
+}
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  background:#fff; border:1px solid #dcdde3; border-radius:24px;
+  padding:6px 12px; font-size:13px; cursor:pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+.chips .chip:hover{
+  background-color: #3b6de0;
+  color: #fff;
+  border-color: #3b6de0;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+.user-btn{ background:transparent; border:0; padding:6px 8px; border-radius:8px; font-weight:600; display:flex; align-items:center; gap:6px; cursor:pointer; }
+.user-btn:hover{ background:#f3f4f6; }
+
+/* ===== Layout principal ===== */
+.page {
+  min-height: calc(100vh - 50px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 50px 16px;
+  background: #f7f7fa;
+  box-shadow: none;
+  border: none;
+}
+
+/* ===== Card (contenedor del form) ===== */
+.card{
+  width: min(700px, 100%);      /* si la querés un poco más ancha */
+  background: #fff;
+  border: none;                 /* ← QUITAMOS EL BORDE */
+  border-radius: 16px;
+  padding: 40px 60px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.06);  /* sombra suave y pareja */
+}
+.card h2 {
+  font-size: 22px;      /* era 20px */
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+/* ===== Campos del form ===== */
+.field{ display:flex; flex-direction:column; margin-bottom:18px; }
+.field label{ font-weight:600; margin-bottom:5px; color:#2c2c34; }
+.input,.select,.textarea{
+  width:100%; border:1px solid #cfd2dc; border-radius:10px;
+  padding:10px 14px; font-size:14px; outline:none; background:#fff;
+  transition: all .15s ease-in-out;
+}
+.input:focus,.select:focus,.textarea:focus{
+  border-color:#4a7df5; box-shadow:0 0 0 3px rgba(74,125,245,.15);
+}
+.textarea{ resize:vertical; min-height:100px; border-radius:12px; }
+.actions{ display:flex; justify-content:center; margin-top:20px; }
+.btn{
+  background:#4a7df5; color:#fff; font-weight:600; border:none; border-radius:10px;
+  padding:10px 26px; cursor:pointer; font-size:14px; transition: background .15s ease-in-out;
+}
+.btn:hover{ background:#3b6de0; }
+.btn:disabled{ opacity:.6; cursor:not-allowed; }
+
+/* ===== Sidebar flotante (NO ocupa espacio) ===== */
+.sb-overlay{
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.35);
+  opacity: 0; pointer-events: none; transition: opacity .25s ease;
+  z-index: 900;
+}
+.sb-overlay.show{ opacity: 1; pointer-events: all; }
+
+.sb-panel{
+  position: fixed; top:0; right:0;           /* fixed = fuera del flujo */
+  width: 300px; height: 100vh; background:#fff;
+  box-shadow: -8px 0 24px rgba(0,0,0,.1);
+  transform: translateX(100%);                /* completamente fuera */
+  transition: transform .3s cubic-bezier(.25,1,.5,1);
+  z-index: 1000; display:flex; flex-direction:column;
+}
+.sb-panel.open{ transform: translateX(0); }
+
+.sb-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 16px; border-bottom:1px solid #eee;
+}
+.sb-header h3{ margin:0; font-size:16px; font-weight:600; }
+.sb-close{ background:transparent; border:none; font-size:18px; cursor:pointer; }
+
+.sb-content{
+  flex:1; display:flex; align-items:flex-end; justify-content:center; padding:20px;
+}
+ .btn-danger{
+  background: #4a7df5;
+  color: #fff;
+  border: none;
+  padding: 9px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+
+.btn-danger:hover{ background:#dc2626; } 
+
+/* ===== Responsive ===== */
+@media (max-width: 640px) {
+  .card{ padding: 30px 20px; }
+  .chip{ font-size:12px; padding:5px 10px; }
+  .field .input{ width: 350px;}
+  .field .textarea{ width: 350px;}
+
+
+}
